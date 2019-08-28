@@ -1,6 +1,6 @@
-require "zipline/version"
+require 'zipline/version'
 require 'zip_tricks'
-require "zipline/zip_generator"
+require 'zipline/zip_generator'
 
 # class MyController < ApplicationController
 #   include Zipline

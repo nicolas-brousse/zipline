@@ -22,30 +22,30 @@ describe Zipline::ZipGenerator do
 
   describe '.normalize' do
     let(:generator){ Zipline::ZipGenerator.new([])}
-    context "CarrierWave" do
-      context "Remote" do
+    context 'CarrierWave' do
+      context 'Remote' do
         let(:file){ CarrierWave::Storage::Fog::File.new(nil,nil,nil) }
-        it "extracts the url" do
+        it 'extracts the url' do
           allow(file).to receive(:url).and_return('fakeurl')
           expect(File).not_to receive(:open)
           expect(generator.normalize(file)).to eq({url: 'fakeurl'})
         end
       end
-      context "Local" do
+      context 'Local' do
         let(:file){ CarrierWave::SanitizedFile.new(Tempfile.new('t')) }
-        it "creates a File" do
+        it 'creates a File' do
           allow(file).to receive(:path).and_return('spec/fakefile.txt')
           normalized = generator.normalize(file)
           expect(normalized.keys).to include(:file)
           expect(normalized[:file]).to be_a File
         end
       end
-      context "CarrierWave::Uploader::Base" do
+      context 'CarrierWave::Uploader::Base' do
         let(:uploader) { Class.new(CarrierWave::Uploader::Base).new }
 
-        context "Remote" do
+        context 'Remote' do
           let(:file){ CarrierWave::Storage::Fog::File.new(nil,nil,nil) }
-          it "extracts the url" do
+          it 'extracts the url' do
             allow(uploader).to receive(:file).and_return(file)
             allow(file).to receive(:url).and_return('fakeurl')
             expect(File).not_to receive(:open)
@@ -53,9 +53,9 @@ describe Zipline::ZipGenerator do
           end
         end
 
-        context "Local" do
+        context 'Local' do
           let(:file){ CarrierWave::SanitizedFile.new(Tempfile.new('t')) }
-          it "creates a File" do
+          it 'creates a File' do
             allow(uploader).to receive(:file).and_return(file)
             allow(file).to receive(:path).and_return('spec/fakefile.txt')
             normalized = generator.normalize(uploader)
@@ -65,26 +65,26 @@ describe Zipline::ZipGenerator do
         end
       end
     end
-    context "Paperclip" do
-      context "Local" do
+    context 'Paperclip' do
+      context 'Local' do
         let(:file){ Paperclip::Attachment.new(:name, :instance) }
-        it "creates a File" do
+        it 'creates a File' do
           allow(file).to receive(:path).and_return('spec/fakefile.txt')
           normalized = generator.normalize(file)
           expect(normalized.keys).to include(:file)
           expect(normalized[:file]).to be_a File
         end
       end
-      context "Remote" do
+      context 'Remote' do
         let(:file){ Paperclip::Attachment.new(:name, :instance, storage: :s3) }
-        it "creates a URL" do
+        it 'creates a URL' do
           allow(file).to receive(:expiring_url).and_return('fakeurl')
           expect(File).to_not receive(:open)
           expect(generator.normalize(file)).to include(url: 'fakeurl')
         end
       end
     end
-    context "ActiveStorage" do
+    context 'ActiveStorage' do
       module ActiveStorage
         class Attached
           class One < Attached
@@ -94,8 +94,8 @@ describe Zipline::ZipGenerator do
         class Blob; end
       end
 
-      context "Attached::One" do
-        it "extracts url" do
+      context 'Attached::One' do
+        it 'extracts url' do
           attached = create_attached_one
           allow_any_instance_of(Object).to receive(:defined?).and_return(true)
 
@@ -106,8 +106,8 @@ describe Zipline::ZipGenerator do
         end
       end
 
-      context "Attachment" do
-        it "extracts url" do
+      context 'Attachment' do
+        it 'extracts url' do
           attachment = create_attachment
           allow_any_instance_of(Object).to receive(:defined?).and_return(true)
 
@@ -118,8 +118,8 @@ describe Zipline::ZipGenerator do
         end
       end
 
-      context "Blob" do
-        it "extracts url" do
+      context 'Blob' do
+        it 'extracts url' do
           blob = create_blob
           allow_any_instance_of(Object).to receive(:defined?).and_return(true)
 
@@ -150,22 +150,22 @@ describe Zipline::ZipGenerator do
         blob
       end
     end
-    context "Fog" do
-      it "extracts url" do
+    context 'Fog' do
+      it 'extracts url' do
         allow(file).to receive(:url).and_return('fakeurl')
         expect(File).not_to receive(:open)
         expect(generator.normalize(file)).to eq(url:  'fakeurl')
       end
     end
-    context "IOStream" do
+    context 'IOStream' do
       let(:file){ StringIO.new('passthrough')}
-      it "passes through" do
+      it 'passes through' do
         expect(generator.normalize(file)).to eq(file: file)
       end
     end
-    context "invalid" do
+    context 'invalid' do
       let(:file){ Thread.new{} }
-      it "raises error" do
+      it 'raises error' do
         expect{generator.normalize(file)}.to raise_error(ArgumentError)
       end
     end

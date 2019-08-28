@@ -9,7 +9,7 @@ module Zipline
 
     #this is supposed to be streamed!
     def to_s
-      throw "stop!"
+      throw 'stop!'
     end
 
     def each(&block)
