@@ -13,11 +13,14 @@ require 'zipline/zip_generator'
 module Zipline
   def zipline(files, zipname = 'zipline.zip')
     zip_generator = ZipGenerator.new(files)
+
     headers['Content-Disposition'] = "attachment; filename=\"#{zipname.gsub '"', '\"'}\""
-    headers['Content-Type'] = Mime::Type.lookup_by_extension('zip').to_s
+    headers['Content-Type'] = Mime[:zip].to_s
+    headers['Last-Modified'] = Time.now.httpdate
+
     response.sending_file = true
     response.cache_control[:public] ||= false
+
     self.response_body = zip_generator
-    self.response.headers['Last-Modified'] = Time.now.httpdate
   end
 end
